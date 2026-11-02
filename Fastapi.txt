@@ -1,0 +1,204 @@
+Why fastapi is preferred by developers ?
+
+
+
+- automatic documentation( docs) swagger
+- pydantic validation
+- Minimal Boiler plate
+- Modern architecture
+
+
+### fastapi run commands ######
+uvicorn file_name:app(object name created from fastapi) --reload(autmatically reloads whenever their is change in the code)\ restarts the server when you save the cod
+
+
+def get_data , save_data these reusable functions are get helper functions 
+
+
+Status_code 
+
+200 - request worked successfully
+201 - created successfully
+400 - Bad request 
+401  - when you are unauthorized 
+403 - forbidden
+404 - not found 
+422 - unprocessable entity ( Data Format is wrong )
+500 - Data format is wrong 
+from fastapi import Path
+
+from fastapi import FastAPI , HTTPException , Path , Query 
+
+
+def load_data():
+	with open("data.json", "r") as file:
+		return json.load(file)
+
+def save_data(data):
+	with open("data.json" ,"w") as file:
+		json.dump(data , file, indet=4)
+
+
+####### .... required(mandatory to give in path params
+@app.post('/student/{student_id}')
+def get_student_by_id(student_id : str = Path(...):      : this is called annotation defining the datatype of the variable 
+     data = load_student()   # data contains all the data of the students in  the 
+	
+
+
+######### QUERY PARAMETERS ################
+
+in a dictionary how to fetch key and values 
+
+in query parameter we take input from user which is written in function definition
+
+def filter_student(course : str = Query(None):   default value is None
+	
+############ Sorted function in python ###########
+
+how to iterate in a dictionary : 
+student = []
+for key , values in dict.items(): #where dict is the actual dictionary which contains the items
+	values["id"] = key
+	student.append(info)
+Syntax:
+
+sorted(iterable , key=None , reverse = False)\
+
+lambda s : s[sort_by]
+& : merges multiple queries 
+
+
+NOTE - for getting particular item we use path paramter defined in url in path whereas for filerting of data we use query parameter which is given in req body
+
+
+For Pagination : 
+
+Start = Page -1 * limit 
+End = Start + limit where ( limit is the value how many content you want to show  )
+
+In Query Parameters Query(1= default value , ge(greater than or equal to ) = 1 , le(less than or equal to ) , gt(greater than) ,lt(less than)
+
+
+## Pydantic ####### It is used for data Validation
+
+uv add 'pydantic[email]'
+
+from pydantic import BaseModel , Field , EmailStr(checks for @ and . in email )
+Pydantic also does type conversion like "20" to 20
+
+pydantic also has custom rules and regulations which comes from Field , Field(...) -> required
+
+- min_length , max_length
+- course : str = "Python" here python is the default value of the course if not given 
+- phone : str | None = None (means value is string or can be None and the default value is None in case not given by the user)
+
+
+
+
+############ Field validator ############ ( our own custom rule )
+
+from pydantic import field_validator
+
+class Student(BaseModel):
+	id     : str = Field(... , examples=["S001"])
+	name   : str = Field(..., min_length=3 , max_length=50)
+	age    : int = Field(... , gt=0 , le=100)
+	course : str = Field(... , max_length=50)
+	marks  : int = Field(... , ge=0 , le=100)
+	email  : EmailStr
+
+	
+	@field_validator("name") kis field pe lagana ha 
+	
+	@classmethod
+	def check_name(cls , value): cls refers to class Student , and value is name
+		
+		if not value.replace(" " , "").isalpha():
+			raise ValueError(" Name must contain only letters and spaces ")
+		return value.title()   (title return suprabh sharma -> Suprabh Sharma)
+
+
+############### Computed Field ############## ( A value Pydantic calculates for us )
+from pydantic import computed_field
+
+NOTE -- We will not give grade pydantic will automatically calculate grade in terms of marks
+	@computed_field
+	@property ( this decorator comes along with property )
+	def grade(self) -> str:  ### here self refers to the object and how to access it self.field_name like self.id or self.name or self.age or self.marks
+		if self.marks >= 90 : 
+			return "A"
+		elif self.marks >= 80 : 
+			return "B"
+		else :
+			return "C"
+			
+###### POST Method (not shows in route always in docs)
+
+
+@app.post("/create")
+def create_student(student : Student)  # where student is the single student / Object of the class Student(BaseModel)
+	if student.id in data:
+		raise HTTPException(status_code = 400 , detail = " Student Already exists with this ID )
+	
+	data = load_data():
+	# Abhi student ek object ha isliey object.id key bna diya student.model_dump(exclude = {"id" , "grade" }
+	data[student.id] = student.model_dump(exclude = {"id" , "grade"} ##### Ye isliye kra kyunki student.id ko as a key dikhana th
+
+	
+	save_data(data)
+	return { "message" : "Student created successfully" , "student" : student}
+
+##### If you are giving student id as a path parameter than {student_id} 
+      data = load_data()
+then if student_id not in data : 
+		raise HTTPException( status_code = 400 , Detail = f"Student with id {student_id} not found"
+
+
+@app.put("/update/{student_id}")
+def update_student(student_id : str = Path(... , description = "The ID of the student that you want to update , examples["S001"]
+		   student_update : StudentUpdate ) -> dict 
+
+existing= data[student_id]
+update = student_update.model_dump(exclude_unset = True) #### Fields not explicitly provided 
+for key , value in student_update.items():
+	existing[key] = value
+
+
+######## Note in dictionary how you delete andy key with its values " del data[student_id] "
+
+@app.delete('/delete/{student_id}')
+def delete_student(student_id : str = Path(... , description = "The Id of the Student That you want to delete" , examples =["S001"]):
+	data = load_data()
+	if student_id not in data:
+		raise HTTPException( status_code = 404 , detail = f"Student with id {student_id} not found")
+
+	del data[student_id]
+	save_data(data)
+
+	return { "message" : "The Student has been deleted successfully"}
+
+
+
+student["marks"] how to access an element in dictionary
+student.marks how toa acces the value in object
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

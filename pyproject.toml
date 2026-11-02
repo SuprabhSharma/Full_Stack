@@ -1,0 +1,26 @@
+[project]
+name = "postgres"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "SuprabhSharma", email = "sharmasuprabh2608@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.32.0",
+    "dotenv>=0.9.9",
+    "fastapi[response-model]>=0.162.0",
+    "psycopg>=3.3.6",
+    "psycopg-binary>=3.3.6",
+    "pydantic[email]>=2.14.1",
+    "sqlalchemy>=2.1.6",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+postgres = "postgres:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
