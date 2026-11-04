@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+
+}
+
+body {
+  margin: 0;
+  padding: 30 px;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+h1 {
+  margin-top: 10px;
+
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  margin-top:  20 px;
+}
+
+th , td {
+  padding: 14px;
+  text-align: left;
+  border-bottom:  1px sold #add;
+}
+
+th {
+  background: #e9edf3;
+}
+
+tr:hover {
+  background: #f7f9fc;
+}
+
+form {
+  background: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+form h2 {
+  grid-column: 1 / -1;
+}
+
+input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+}
+
+button {
+  padding: 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form button {
+  grid-column: 1 / -1;
+}
+
+.student-actions {
+  display: flex;
+  gap: 8px;
+}

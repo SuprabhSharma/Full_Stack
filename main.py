@@ -14,7 +14,18 @@ from sqlalchemy import Column, Integer, String, create_engine, func, text
 from sqlalchemy.exc import IntegrityError  ## exception
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173" , "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_headers=["*"],
+    allow_methods=["*"],
+)
 
 # Part 1 : Load Database url from the .env file
 
@@ -64,7 +75,7 @@ class StudentCreate(BaseModel):
     id: str = Field(..., examples=["S001"])
     name: str = Field(..., min_length=2, max_length=100)
     age: int = Field(..., gt=0, le=100)
-    email: EmailStr | None
+    email: EmailStr
     course: str = Field(..., min_length=2, max_length=50)
     marks: int = Field(..., ge=0, le=100)
 
@@ -154,7 +165,7 @@ def get_student(
 
 
 ## Post : Create a Student
-@app.post("/student", response_model=StudentResponse, status_code=201 , tags=["POSR ROUTE"])
+@app.post("/student", response_model=StudentResponse, status_code=201 , tags=["POST ROUTE"])
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
     if db.get(StudentDB, student.id):
         raise HTTPException(
@@ -220,7 +231,7 @@ def delete_student(
     db: Session = Depends(get_db),
 ):
 
-    student = get_db(StudentDB, student_id)
+    student = db.get(StudentDB, student_id)
 
     if student is None:
         raise HTTPException(
@@ -281,7 +292,7 @@ def get_all(
         "page" : page,
         "limit" : limit,
         "total_students": total_students,
-        "students" : students
+        "students" : [StudentResponse.model_validate(student) for student in students]
     }
     
     
